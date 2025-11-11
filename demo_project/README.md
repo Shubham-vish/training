@@ -1,68 +1,99 @@
-# Multi-Agent Content Creation Demo
-## CrewAI + LangGraph Integration
+# Multi-Agent Content Creation System
 
-This demo showcases a content creation multi-agent system that integrates:
-- **CrewAI**: Role-based agent collaboration patterns
-- **LangGraph**: Workflow orchestration and state management
-
-## Demo Structure
-
-### 1. Framework Introduction (8 minutes)
-- CrewAI role-based collaboration
-- LangGraph workflow orchestration  
-- Brief AutoGen comparison
-- Integration benefits
-
-### 2. Working Demo (15 minutes)
-- Live content creation workflow
-- Agent role demonstrations
-- State management visualization
-- Real-time results
-
-### 3. Architecture Deep-dive (5 minutes)
-- Technical implementation
-- Integration patterns
-- Best practices
-
-## Agent Roles
-
-1. **Content Manager** (Planner) - Strategy and planning
-2. **Research Specialist** (Research Planner) - Research strategy
-3. **Data Analyst** (Search Executor) - Information gathering  
-4. **Content Writer** (Script Generator) - Content creation
-5. **Quality Assurance** (Reflection) - Review and critique
-6. **SEO Specialist** (Hashtag Generator) - Optimization
-7. **Marketing Specialist** (CTA Generator) - Call-to-action
-
-## Files Structure
-
-```
-demo_project/
-├── README.md
-├── requirements.txt
-├── main_demo.py              # Main demo execution
-├── agents/
-│   ├── __init__.py
-│   ├── crew_roles.py         # CrewAI role definitions
-│   ├── langgraph_nodes.py    # LangGraph node implementations
-│   └── integration.py        # CrewAI + LangGraph integration
-├── workflow/
-│   ├── __init__.py
-│   ├── graph_builder.py      # LangGraph workflow definition
-│   └── state_schema.py       # State management
-├── utils/
-│   ├── __init__.py
-│   ├── display.py            # Demo visualization helpers
-│   └── sample_data.py        # Backup demo data
-└── presentation/
-    ├── slides.md             # Slide content
-    ├── script.md             # Demo script with timing
-    └── diagrams/             # Workflow visualizations
-```
+A LangGraph-based multi-agent system that creates high-quality content through specialized AI agents working together.
 
 ## Quick Start
 
+1. **Create and activate a virtual environment:**
+```bash
+# Create virtual environment
+python3 -m venv .venv
+
+# Activate virtual environment
+# On Linux/Mac:
+source .venv/bin/activate
+
+# On Windows:
+# .venv\Scripts\activate
+```
+
+2. **Install dependencies:**
 ```bash
 pip install -r requirements.txt
-python main_demo.py --topic "Future of Remote Work"
 ```
+
+3. **Set up environment variables:**
+```bash
+cp .env.example .env
+# Edit .env and add your API keys
+```
+
+4. **Run the demo:**
+```bash
+python main_demo.py --topic "Future of AI"
+```
+
+## What It Does
+
+The system uses 7 specialized agents to create content:
+
+1. **Planner** - Creates content strategy
+2. **Research Planner** - Designs research approach
+3. **Search Executor** - Gathers information
+4. **Script Generator** - Writes the content
+5. **Reflection** - Reviews quality (conditional routing)
+6. **Hashtag Generator** - Optimizes for SEO
+7. **CTA Generator** - Creates call-to-action
+
+## Key Features
+
+- **State Management**: Shared state flows through all agents
+- **Conditional Routing**: Quality check determines if revision is needed
+- **Modular Design**: Each agent in separate file
+- **LangGraph Orchestration**: Graph-based workflow with conditional edges
+
+## Project Structure
+
+```
+demo_project/
+├── agents/              # Individual agent implementations
+│   ├── planner.py
+│   ├── research_planner.py
+│   ├── search_executor.py
+│   ├── script_generator.py
+│   ├── reflection.py
+│   ├── hashtag_generator.py
+│   └── cta_generator.py
+├── workflow/            # LangGraph workflow
+│   ├── graph_builder.py
+│   └── state_schema.py
+├── utils/               # Helper utilities
+│   ├── display.py
+│   └── llm_client.py
+└── main_demo.py         # Main entry point
+```
+
+## Usage Examples
+
+```bash
+# Basic demo
+python main_demo.py --topic "Future of AI"
+
+# With custom style
+python main_demo.py --topic "Climate Change" --style "Professional"
+```
+
+## Technologies
+
+- **LangGraph**: Workflow orchestration and state management
+- **LangChain**: LLM integration
+- **OpenAI/Azure OpenAI**: Language model provider
+- **Python 3.10+**: Core language
+
+## Demo Output
+
+The system generates:
+- Complete content script
+- Strategic hashtags
+- Compelling call-to-action
+- Quality score and metrics

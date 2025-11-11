@@ -1,33 +1,25 @@
 """
-LangGraph Workflow Builder with CrewAI Integration
+LangGraph Workflow Builder for Multi-Agent Content Creation
 
-This module builds the LangGraph workflow that orchestrates CrewAI role-based agents
-for content creation. It demonstrates the power of combining workflow orchestration
-with role-based collaboration patterns.
+This module builds the LangGraph workflow that orchestrates specialized agents
+for content creation. It demonstrates graph-based workflow management with
+conditional routing, state management, and revision loops.
 """
 
 from typing import Dict, Any
 from langgraph.graph import StateGraph, END
 from workflow.state_schema import ContentCreationState
-from agents.langgraph_nodes import (
-    planner_node,
-    research_planner_node,
-    search_executor_node,
-    script_generator_node,
-    reflection_node,
-    hashtag_generator_node,
-    cta_generator_node
-)
+from agents.planner import planner_node
+from agents.research_planner import research_planner_node
+from agents.search_executor import search_executor_node
+from agents.script_generator import script_generator_node
+from agents.reflection import reflection_node
+from agents.hashtag_generator import hashtag_generator_node
+from agents.cta_generator import cta_generator_node
 from utils.display import demo_print, workflow_step, section_header
 
 
 def should_revise(state: ContentCreationState) -> str:
-    """
-    Conditional edge function to decide workflow routing based on quality assessment.
-    
-    This demonstrates LangGraph's conditional routing capability - one of its key
-    advantages over simple linear agent chains.
-    """
     if state.needs_revision():
         demo_print("🔄 Quality score below threshold - triggering revision", "yellow")
         return "research_planner"  # Loop back for revision
@@ -37,17 +29,9 @@ def should_revise(state: ContentCreationState) -> str:
 
 
 def build_content_creation_graph() -> StateGraph:
-    """
-    Build the complete LangGraph workflow with CrewAI role integration.
-    
-    This demonstrates how LangGraph provides workflow orchestration while
-    CrewAI patterns provide role-based collaboration structure.
-    """
-    
-    # Initialize the StateGraph with our custom state
     workflow = StateGraph(ContentCreationState)
     
-    # Add nodes (each represents a CrewAI agent role)
+    # Add nodes (each represents a specialized agent)
     workflow.add_node("planner", planner_node)
     workflow.add_node("research_planner", research_planner_node) 
     workflow.add_node("search_executor", search_executor_node)
@@ -82,17 +66,10 @@ def build_content_creation_graph() -> StateGraph:
 
 
 def execute_content_creation_demo(topic: str, style: str = "Educational") -> ContentCreationState:
-    """
-    Execute the complete content creation workflow for demo purposes.
-    
-    This function orchestrates the entire demo, showing the integration of
-    CrewAI role patterns with LangGraph workflow management.
-    """
-    
     section_header("🚀 Multi-Agent Content Creation Demo", "bright_blue")
     
     # Build the workflow graph
-    demo_print("🏗️  Building LangGraph workflow with CrewAI role integration...", "cyan")
+    demo_print("🏗️  Building LangGraph workflow...", "cyan")
     workflow_graph = build_content_creation_graph()
     
     # Compile the workflow
@@ -130,47 +107,6 @@ def execute_content_creation_demo(topic: str, style: str = "Educational") -> Con
         demo_print(f"❌ Error during workflow execution: {str(e)}", "red")
         raise
 
-
-def demonstrate_workflow_features():
-    """
-    Demonstrate key LangGraph features for educational purposes.
-    """
-    
-    section_header("🔍 LangGraph Features Demonstration", "blue")
-    
-    features = [
-        "🔄 State Management - Persistent state across all agents",
-        "🎯 Conditional Routing - Quality-based revision loops", 
-        "🎭 Node-Based Architecture - Each agent as a specialized node",
-        "📊 Execution Tracking - Built-in monitoring and history",
-        "⚡ Error Handling - Graceful failure recovery",
-        "🔧 Modularity - Easy to add/modify agents"
-    ]
-    
-    for i, feature in enumerate(features, 1):
-        workflow_step(i, feature.split(" - ")[0][2:], feature.split(" - ")[1])
-        
-
-def demonstrate_crewai_integration():
-    """
-    Demonstrate how CrewAI concepts enhance the workflow.
-    """
-    
-    section_header("🎭 CrewAI Integration Benefits", "magenta")
-    
-    benefits = [
-        "👨‍💼 Role-Based Design - Each agent has clear responsibilities and expertise",
-        "🤝 Collaboration Patterns - Agents work together like a professional team", 
-        "📋 Task Delegation - Work flows naturally between specialized roles",
-        "🎯 Goal-Oriented - Each role has specific objectives and success metrics",
-        "🧠 Specialized Prompts - Role-specific system prompts for better outputs",
-        "📈 Quality Assurance - Built-in review and improvement cycles"
-    ]
-    
-    for i, benefit in enumerate(benefits, 1):
-        workflow_step(i, benefit.split(" - ")[0][2:], benefit.split(" - ")[1])
-
-
 def get_workflow_summary() -> Dict[str, Any]:
     """
     Get a summary of the workflow architecture for presentation.
@@ -206,9 +142,7 @@ def get_workflow_summary() -> Dict[str, Any]:
 if __name__ == "__main__":
     # Demo the workflow building process
     demonstrate_workflow_features()
-    demonstrate_crewai_integration()
     
-    # Show workflow summary
     summary = get_workflow_summary()
     section_header("📊 Workflow Architecture Summary", "cyan")
     print(f"Integration: {summary['framework_integration']['benefit']}")

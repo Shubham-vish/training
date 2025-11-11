@@ -11,52 +11,39 @@ from datetime import datetime
 
 
 class ContentCreationState(BaseModel):
-    """
-    Shared state for the content creation workflow.
     
-    This state flows between all agents in the LangGraph workflow,
-    with each agent (following CrewAI role patterns) contributing
-    their specialized outputs.
-    """
-    
-    # Input Parameters
     topic: str = Field(description="Main topic for content creation")
-    content_type: str = Field(default="Short (60 seconds)", description="Type of content to generate")
     style: str = Field(default="Educational", description="Content style or tone")
-    target_audience: str = Field(default="General", description="Target audience for the content")
     
     # Workflow State
     revision_number: int = Field(default=0, description="Current revision iteration")
     max_revisions: int = Field(default=2, description="Maximum allowed revisions")
     current_step: str = Field(default="", description="Current workflow step")
     
-    # Agent Outputs (CrewAI Role-based)
-    # Content Manager outputs
+    # Agent Outputs - Essential fields only
+    # Planner
     content_outline: str = Field(default="", description="Content strategy and outline")
-    content_goals: List[str] = Field(default_factory=list, description="Content objectives")
     
-    # Research Specialist outputs  
+    # Research Planner
     research_plan: str = Field(default="", description="Research strategy and approach")
     research_queries: List[str] = Field(default_factory=list, description="Specific research queries")
     
-    # Data Analyst outputs
+    # Search Executor
     research_data: str = Field(default="", description="Collected research information")
     key_insights: List[str] = Field(default_factory=list, description="Key research insights")
     
-    # Content Writer outputs
+    # Script Generator
     script: str = Field(default="", description="Generated content script")
-    content_structure: Dict[str, str] = Field(default_factory=dict, description="Content structure breakdown")
     
-    # Quality Assurance outputs
+    # Reflection
     quality_score: float = Field(default=0.0, description="Content quality assessment score")
     critique: str = Field(default="", description="Quality feedback and recommendations")
-    improvement_suggestions: List[str] = Field(default_factory=list, description="Specific improvement suggestions")
     
-    # SEO Specialist outputs
+    # Hashtag Generator
     hashtags: List[str] = Field(default_factory=list, description="Generated hashtags")
     seo_keywords: List[str] = Field(default_factory=list, description="SEO-optimized keywords")
     
-    # Marketing Specialist outputs
+    # CTA Generator
     cta: str = Field(default="", description="Call-to-action text")
     engagement_hooks: List[str] = Field(default_factory=list, description="Engagement strategies")
     
@@ -115,27 +102,21 @@ class ContentCreationState(BaseModel):
 # State transformation helpers
 def create_initial_state(
     topic: str,
-    content_type: str = "Short (60 seconds)",
-    style: str = "Educational",
-    target_audience: str = "General"
+    style: str = "Educational"
 ) -> ContentCreationState:
-    """Create initial state for content creation workflow"""
+
     return ContentCreationState(
         topic=topic,
-        content_type=content_type,
         style=style,
-        target_audience=target_audience,
         current_step="initialization"
     )
 
 
 def state_summary_for_demo(state: ContentCreationState) -> Dict[str, Any]:
-    """Create a demo-friendly summary of the current state"""
     return {
         "📝 Topic": state.topic,
         "🎯 Style": state.style,
-        "👥 Audience": state.target_audience,
-        "🔄 Progress": f"{len(state.agent_history)}/7 agents completed",
+        " Progress": f"{len(state.agent_history)}/7 agents completed",
         "📊 Quality Score": f"{state.quality_score}/10",
         "✅ Ready": "Yes" if state.is_content_ready() else "No",
         "🔄 Needs Revision": "Yes" if state.needs_revision() else "No"
