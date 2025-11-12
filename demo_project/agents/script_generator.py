@@ -36,18 +36,17 @@ def script_generator_node(state: ContentCreationState) -> Dict[str, Any]:
     
     system_prompt = get_agent_system_prompt("script_generator")
     user_prompt = f"""
-Create engaging short-form/reel content for: "{state.topic}"
+    
+Create engaging content for: "
+{state.topic}"
 
 Content Strategy: {state.content_outline}
 Research Data: {state.research_data}
 
 Requirements:
-- Format: Short-form video script (60 seconds max)
 - Style: {state.style}
-- Target Audience: General social media users interested in learning
 - Structure: Hook → Problem → Solution → Proof → CTA
-- Integrate research statistics
-- Ready for video/reel publication"""
+- Integrate research statistics"""
     
     script = llm_client.generate_response(
         system_prompt,
@@ -62,6 +61,7 @@ Requirements:
     
     updates = {
         "script": script,
+        "content_structure": {},
         "current_step": "script_complete"
     }
     
@@ -82,8 +82,8 @@ if __name__ == "__main__":
     
     # Create test state
     state = ContentCreationState(
-        topic="Productivity Tips for Remote Workers",
-        style="Practical and motivating"
+        topic="Artificial Intelligence",
+        style="Professional and engaging",
     )
     
     # Set required fields
@@ -116,8 +116,7 @@ if __name__ == "__main__":
     - Data privacy concerns
     - Integration complexity
     """
-    
-    state.content_goals = ["Educate", "Engage", "Inspire"]
+
     
     # Execute node
     print("▶️  Executing script_generator_node...\n")

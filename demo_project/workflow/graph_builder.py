@@ -5,8 +5,6 @@ This module builds the LangGraph workflow that orchestrates specialized agents
 for content creation. It demonstrates graph-based workflow management with
 conditional routing, state management, and revision loops.
 """
-
-from typing import Dict, Any
 from langgraph.graph import StateGraph, END
 from workflow.state_schema import ContentCreationState
 from agents.planner import planner_node
@@ -65,7 +63,7 @@ def build_content_creation_graph() -> StateGraph:
     return workflow
 
 
-def execute_content_creation_demo(topic: str, style: str = "Educational") -> ContentCreationState:
+def execute_content_creation(topic: str, style: str = "Educational") -> ContentCreationState:
     section_header("🚀 Multi-Agent Content Creation Demo", "bright_blue")
     
     # Build the workflow graph
@@ -106,46 +104,33 @@ def execute_content_creation_demo(topic: str, style: str = "Educational") -> Con
     except Exception as e:
         demo_print(f"❌ Error during workflow execution: {str(e)}", "red")
         raise
-
-def get_workflow_summary() -> Dict[str, Any]:
-    """
-    Get a summary of the workflow architecture for presentation.
-    """
-    return {
-        "framework_integration": {
-            "primary": "LangGraph - Workflow orchestration and state management",
-            "secondary": "CrewAI - Role-based agent collaboration patterns",
-            "benefit": "Best of both worlds - structured workflows + specialized roles"
-        },
-        "agent_count": 7,
-        "workflow_features": [
-            "Conditional routing based on quality assessment",
-            "Persistent state management across all agents",
-            "Automatic revision loops for quality improvement",
-            "Modular architecture for easy agent addition"
-        ],
-        "crewai_benefits": [
-            "Clear role definitions and responsibilities",
-            "Specialized system prompts for each role",
-            "Professional team collaboration patterns",
-            "Goal-oriented agent design"
-        ],
-        "business_value": [
-            "Scalable content creation process",
-            "Consistent quality with built-in review",
-            "Reduced human workload and faster execution",
-            "Easily adaptable to different content types"
-        ]
-    }
-
-
-if __name__ == "__main__":
-    # Demo the workflow building process
-    demonstrate_workflow_features()
     
-    summary = get_workflow_summary()
-    section_header("📊 Workflow Architecture Summary", "cyan")
-    print(f"Integration: {summary['framework_integration']['benefit']}")
-    print(f"Agent Count: {summary['agent_count']}")
-    print(f"Key Features: {len(summary['workflow_features'])} workflow capabilities")
-    print(f"CrewAI Benefits: {len(summary['crewai_benefits'])} collaboration enhancements")
+if __name__ == "__main__":
+    workflow_graph = build_content_creation_graph()
+    compiled_workflow = workflow_graph.compile()
+    
+    
+    from langchain_core.runnables.graph import MermaidDrawMethod
+    from IPython.display import display, HTML, Image
+
+    display(
+        Image(
+            compiled_workflow.get_graph().draw_mermaid_png(
+                draw_method=MermaidDrawMethod.API,
+            )
+        )
+    )
+
+    # print(compiled_workflow.get_graph().draw_mermaid())
+    
+    
+    topic = "The Future of Artificial Intelligence in Everyday Life"
+    style = "Educational"
+    
+    initial_state = ContentCreationState(
+        topic=topic,
+        style=style,
+        current_step="workflow_initialized"
+    )
+    
+    result = compiled_workflow.invoke(initial_state)

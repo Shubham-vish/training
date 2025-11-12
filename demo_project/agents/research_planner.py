@@ -96,7 +96,7 @@ if __name__ == "__main__":
     # Create test state
     state = ContentCreationState(
         topic="Quantum Computing",
-        style="Technical but accessible"
+        style="Technical but accessible",
     )
     
     state.content_outline = """
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     # Execute node
     print("▶️  Executing research_planner_node...\n")
     result = research_planner_node(state)
-
+    
     # Apply updates
     for key, value in result.items():
         setattr(state, key, value)
@@ -116,10 +116,10 @@ if __name__ == "__main__":
     print("\n" + "="*70)
     print("📋 RESEARCH QUERIES")
     print("="*70)
-    queries_text = "\n"
+    queries_text= "\n"
     for i, query in enumerate(state.research_queries, 1):
         print(f"{i}. {query}")
-        queries_text += f"{i}. {query}\n"
+        queries_text+= f"{query}\n"
     print("="*70)
     print(f"✅ Success! Generated {len(state.research_queries)} research queries")
     print("="*70 + "\n")

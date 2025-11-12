@@ -95,7 +95,7 @@ if __name__ == "__main__":
     # Create test state
     state = ContentCreationState(
         topic="Cybersecurity",
-        style="Informative and urgent"
+        style="Informative and urgent",
     )
     
     state.research_queries = [

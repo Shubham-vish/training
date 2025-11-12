@@ -9,6 +9,10 @@ from workflow.state_schema import ContentCreationState
 from agents.agent_prompts import get_agent_system_prompt
 from utils.display import demo_print, agent_thinking, agent_output
 from utils.llm_client import get_llm_client
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
 
 
 class CTAOutput(BaseModel):
@@ -17,10 +21,23 @@ class CTAOutput(BaseModel):
     engagement_hooks: List[str] = Field(description="5 specific engagement hooks")
 
 
-def _display_cta_summary(hooks_count: int, execution_time: float):
-    """Display CTA summary"""
+def _display_cta_summary(cta: str, engagement_hooks: List[str], execution_time: float):
+    """Display CTA with engagement hooks in a styled panel"""
     agent_output(f"✅ Call-to-action created")
-    demo_print(f"   Engagement hooks: {hooks_count} conversion strategies", "green")
+    demo_print(f"   Engagement hooks: {len(engagement_hooks)} conversion strategies", "green")
+    
+    # Display CTA in a panel
+    panel = Panel(
+        cta,
+        title="[bold magenta]🚀 Call-to-Action[/bold magenta]",
+        border_style="magenta",
+        padding=(1, 2)
+    )
+    console.print(panel)
+    
+    # Display engagement hooks
+    hooks_text = "\n".join([f"  {i+1}. {hook}" for i, hook in enumerate(engagement_hooks)])
+    demo_print(f"\n💡 Engagement Strategies:\n{hooks_text}", "cyan")
     demo_print(f"   Execution time: {execution_time:.2f}s", "cyan")
 
 
@@ -38,12 +55,12 @@ def cta_generator_node(state: ContentCreationState) -> Dict[str, Any]:
     
     system_prompt = get_agent_system_prompt("cta_generator")
     user_prompt = f"""
-Create compelling call-to-action for short-form educational video:
+Create compelling calls-to-action for this content:
 
 Topic: {state.topic}
-Script: {state.script}
+Content Script: {state.script}
 
-Generate 2-3 CTA variations optimized for Reels/Shorts engagement."""
+Provide complete CTA with emojis and 5 engagement hooks (Follow, Share, Comment, etc.)."""
     
     result = llm_client.generate_structured(
         system_prompt,
@@ -64,7 +81,7 @@ Generate 2-3 CTA variations optimized for Reels/Shorts engagement."""
     
     state.add_agent_execution("cta_generator", "CTA Generator", updates, execution_time)
     
-    _display_cta_summary(len(result.engagement_hooks), execution_time)
+    _display_cta_summary(result.cta, result.engagement_hooks, execution_time)
     
     return updates
 
@@ -79,8 +96,8 @@ if __name__ == "__main__":
     
     # Create test state
     state = ContentCreationState(
-        topic="Mental Health in Tech",
-        style="Empathetic and actionable"
+        topic="Digital Marketing Trends",
+        style="Actionable and engaging",
     )
     
     state.script = """

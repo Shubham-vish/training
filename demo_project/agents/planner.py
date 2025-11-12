@@ -8,12 +8,25 @@ from workflow.state_schema import ContentCreationState
 from agents.agent_prompts import get_agent_system_prompt
 from utils.display import demo_print, agent_thinking, agent_output
 from utils.llm_client import get_llm_client
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
 
 
-def _display_strategy_summary(execution_time: float, topic: str):
-    """Display strategy summary"""
+def _display_strategy_summary(execution_time: float, topic: str, content_outline: str):
+    """Display strategy summary with content outline"""
     agent_output(f"✅ Content strategy created for '{topic}'")
     demo_print(f"   Strategy and outline generated", "green")
+    
+    # Display content outline in a panel
+    panel = Panel(
+        content_outline,
+        title="[bold green]📋 Content Strategy & Outline[/bold green]",
+        border_style="green",
+        padding=(1, 2)
+    )
+    console.print(panel)
     demo_print(f"   Execution time: {execution_time:.2f}s", "cyan")
 
 
@@ -31,12 +44,11 @@ def planner_node(state: ContentCreationState) -> Dict[str, Any]:
     
     system_prompt = get_agent_system_prompt("planner")
     user_prompt = f"""
-Create comprehensive content strategy for: "{state.topic}"
+Create comprehensive content strategy for: 
+- "{state.topic}"
 
 Requirements:
-- Format: Short-form/Reel content (60 seconds max)
 - Style: {state.style}
-- Target Audience: General social media users interested in learning
 
 Provide detailed outline with goals, structure, tone guidelines, and success metrics."""
     
@@ -57,7 +69,7 @@ Provide detailed outline with goals, structure, tone guidelines, and success met
     
     state.add_agent_execution("planner", "Planner", updates, execution_time)
     
-    _display_strategy_summary(execution_time, state.topic)
+    _display_strategy_summary(execution_time, state.topic, content_outline)
     
     return updates
 

@@ -11,7 +11,7 @@ Usage:
 import argparse
 import sys
 
-from workflow.graph_builder import execute_content_creation_demo
+from workflow.graph_builder import execute_content_creation
 from utils.display import display_final_output, demo_print
 
 
@@ -29,7 +29,7 @@ def main():
         demo_print(f"\n� Starting Multi-Agent Workflow for: '{args.topic}'\n", "bright_blue", bold=True)
         
         # Execute the workflow
-        final_state = execute_content_creation_demo(args.topic, args.style)
+        final_state = execute_content_creation(args.topic, args.style)
         
         # Display results
         display_final_output(final_state)

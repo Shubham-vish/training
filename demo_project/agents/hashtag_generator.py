@@ -9,6 +9,10 @@ from workflow.state_schema import ContentCreationState
 from agents.agent_prompts import get_agent_system_prompt
 from utils.display import demo_print, agent_thinking, agent_output
 from utils.llm_client import get_llm_client
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
 
 
 class HashtagOutput(BaseModel):
@@ -18,11 +22,23 @@ class HashtagOutput(BaseModel):
     rationale: str = Field(description="Brief explanation of hashtag strategy")
 
 
-def _display_hashtags(hashtags: List[str], execution_time: float):
-    """Display generated hashtags"""
+def _display_hashtags(hashtags: List[str], seo_keywords: List[str], execution_time: float):
+    """Display generated hashtags in a styled panel"""
     agent_output(f"✅ SEO optimization completed")
     demo_print(f"   Hashtags: {len(hashtags)} strategic tags generated", "green")
-    demo_print(f"   Sample: {' '.join(hashtags[:5])}", "cyan")
+    
+    # Display hashtags in a panel
+    hashtag_text = " ".join(hashtags)
+    panel = Panel(
+        hashtag_text,
+        title="[bold blue]🏷️ Generated Hashtags[/bold blue]",
+        border_style="blue",
+        padding=(1, 2)
+    )
+    console.print(panel)
+    
+    # Display SEO keywords
+    demo_print(f"   SEO Keywords: {', '.join(seo_keywords)}", "cyan")
     demo_print(f"   Execution time: {execution_time:.2f}s", "cyan")
 
 
@@ -41,12 +57,12 @@ def hashtag_generator_node(state: ContentCreationState) -> Dict[str, Any]:
     # Get hashtags with structured output
     system_prompt = get_agent_system_prompt("hashtag_generator")
     user_prompt = f"""
-Generate trending hashtags for short-form educational video content:
+Create strategic hashtags for this content:
 
 Topic: {state.topic}
-Script: {state.script}
+Content Script: {state.script}
 
-Create 5-8 relevant hashtags optimized for Reels/Shorts/TikTok discovery."""
+Provide 8-10 hashtags (with # symbol), 5 SEO keywords, and brief rationale."""
     
     result = llm_client.generate_structured(
         system_prompt,
@@ -67,7 +83,7 @@ Create 5-8 relevant hashtags optimized for Reels/Shorts/TikTok discovery."""
     
     state.add_agent_execution("hashtag_generator", "Hashtag Generator", updates, execution_time)
     
-    _display_hashtags(result.hashtags, execution_time)
+    _display_hashtags(result.hashtags, result.seo_keywords, execution_time)
     
     return updates
 
@@ -83,7 +99,7 @@ if __name__ == "__main__":
     # Create test state
     state = ContentCreationState(
         topic="Sustainable Technology",
-        style="Inspiring and eco-conscious"
+        style="Inspiring and eco-conscious",
     )
     
     state.script = """

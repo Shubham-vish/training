@@ -72,7 +72,7 @@ def reflection_node(state: ContentCreationState) -> Dict[str, Any]:
 Evaluate this content for quality and effectiveness:
 
 Topic: {state.topic}
-Content Outline: {state.content_outline}
+Style: {state.style}
 Content Script: {state.script}
 
 Provide scores (1-10) for: engagement, accuracy, structure, actionability, audience_fit
@@ -102,6 +102,7 @@ Include detailed critique with strengths and improvements."""
     updates = {
         "quality_score": quality_score,
         "critique": assessment.critique,
+        "improvement_suggestions": [],
         "current_step": "quality_review_complete"
     }
     
@@ -126,7 +127,7 @@ if __name__ == "__main__":
     # Create test state
     state = ContentCreationState(
         topic="Remote Work Productivity",
-        style="Professional and practical"
+        style="Professional and practical",
     )
     
     state.script = """
@@ -145,7 +146,7 @@ if __name__ == "__main__":
     """
     
     state.content_outline = "Structure: Hook → Problem → Solution → Proof → CTA"
-    
+
     # Execute node
     print("▶️  Executing reflection_node...\n")
     result = reflection_node(state)
