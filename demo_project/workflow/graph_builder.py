@@ -76,6 +76,7 @@ def execute_content_creation(topic: str, style: str = "Educational") -> ContentC
     
     # Create initial state
     demo_print(f"📝 Initializing workflow for topic: '{topic}'", "blue")
+    
     initial_state = ContentCreationState(
         topic=topic,
         style=style,
@@ -124,7 +125,7 @@ if __name__ == "__main__":
     # print(compiled_workflow.get_graph().draw_mermaid())
     
     
-    topic = "The Future of Artificial Intelligence in Everyday Life"
+    topic = "How to Build Multi Ai Agent System"
     style = "Educational"
     
     initial_state = ContentCreationState(
@@ -134,3 +135,4 @@ if __name__ == "__main__":
     )
     
     result = compiled_workflow.invoke(initial_state)
+    

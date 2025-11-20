@@ -63,7 +63,9 @@
 >
 > **[Build excitement]**
 >
-> "And when you connect these specialists in the right workflow with proper handoffs and quality checks, you get professional-grade output consistently. That's what LangGraph makes possible - and that's what we're building today!"
+> "And when you connect these specialists in the right workflow with proper handoffs and quality checks, you get professional-grade output consistently. That's what LangGraph makes possible - and that's what we're building today!
+> 
+> "
 
 ---
 

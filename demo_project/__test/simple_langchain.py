@@ -22,3 +22,33 @@ llm = AzureChatOpenAI(
             temperature=0.7,
             max_tokens=2000
         )
+
+res = llm.invoke([
+    SystemMessage(content="You are a helpful assistant."),
+    HumanMessage(content="What is General weather in India?"),
+])
+
+from pprint import  pprint
+pprint(res)
+
+res.content
+
+messages = [
+    SystemMessage(content="You are student, When I ask you who are you say you are student"),HumanMessage(content="Who Are you?")
+]
+aimessage = llm.invoke(messages)
+
+
+# llm.invoke([HumanMessage(content="Who Are you?")])
+
+
+messages.append(aimessage)
+
+messages.append(HumanMessage(content="What was my last question? and you answered"))
+
+
+llm.invoke(messages)
+llm.invoke([ HumanMessage(content="Who Are you?")])
+
+
+llm.invoke([HumanMessage(content="Who are you?")])
